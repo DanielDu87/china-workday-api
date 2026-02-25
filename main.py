@@ -17,8 +17,9 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 
 class CJKResponse(JSONResponse):
+    media_type = "application/json; charset=utf-8"
+
     def render(self, content) -> bytes:
-        import json
         return json.dumps(content, ensure_ascii=False).encode("utf-8")
 
 logging.basicConfig(
