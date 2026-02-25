@@ -14,6 +14,12 @@ import httpx
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from chinese_calendar import get_holiday_detail, is_workday
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import JSONResponse
+
+class CJKResponse(JSONResponse):
+    def render(self, content) -> bytes:
+        import json
+        return json.dumps(content, ensure_ascii=False).encode("utf-8")
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s"
@@ -187,7 +193,7 @@ async def lifespan(app: FastAPI):
     scheduler.shutdown()
 
 
-app = FastAPI(title="中国工作日校验 API", version="1.0.0", lifespan=lifespan)
+app = FastAPI(title="中国工作日校验 API", version="1.0.0", lifespan=lifespan, default_response_class=CJKResponse)
 
 
 @app.get("/workday/check/tomorrow")
