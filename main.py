@@ -194,12 +194,20 @@ async def lifespan(app: FastAPI):
     scheduler.shutdown()
 
 
-app = FastAPI(title="中国工作日校验 API", version="1.0.0", lifespan=lifespan, default_response_class=CJKResponse)
+app = FastAPI(
+    title="中国工作日校验 API",
+    version="1.0.0",
+    lifespan=lifespan,
+    default_response_class=CJKResponse,
+    docs_url="/workday/docs",
+    redoc_url="/workday/redoc",
+    openapi_url="/workday/openapi.json"
+)
 
 
 @app.get("/workday")
 def workday_index():
-    return RedirectResponse(url="/workday/docs")
+    return RedirectResponse(url="https://api.dyxcloud.com/workday/docs")
 
 
 @app.get("/workday/check")
