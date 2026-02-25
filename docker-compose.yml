@@ -3,7 +3,7 @@ services:
     build: .
     container_name: china-workday-api
     ports:
-      - "8000:8000"
+      - "8001:8000"
     volumes:
       - cache-data:/app/cache
     restart: always
