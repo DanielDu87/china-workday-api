@@ -245,11 +245,34 @@ def check_tomorrow():
 
 @app.get("/workday/check/{target_date}")
 def check_date(target_date: str):
-    """查询指定日期是否为工作日，格式: YYYY-MM-DD"""
-    try:
-        d = datetime.strptime(target_date, "%Y-%m-%d").date()
-    except ValueError:
-        raise HTTPException(status_code=400, detail="日期格式错误，请使用 YYYY-MM-DD")
+    """查询指定日期是否为工作日，支持多种格式：
+    - 2026-02-25、2026-2-25
+    - 2026_02_25、2026_2_25
+    - 20260225
+    - 2026年02月25日、2026年2月25日
+    """
+    # 支持的日期格式列表
+    formats = [
+        "%Y-%m-%d", "%Y-%-m-%-d",
+        "%Y_%m_%d", "%Y_%-m_%-d",
+        "%Y%m%d",
+        "%Y年%m月%d日", "%Y年%-m月%-d日",
+    ]
+
+    d = None
+    for fmt in formats:
+        try:
+            d = datetime.strptime(target_date, fmt).date()
+            break
+        except ValueError:
+            continue
+
+    if d is None:
+        raise HTTPException(
+            status_code=400,
+            detail="日期格式错误，支持格式：2026-02-25、2026_02_25、20260225、2026年02月25日等"
+        )
+
     try:
         status = get_date_status(d)
         status.pop("next_rest_day", None)
