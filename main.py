@@ -14,7 +14,7 @@ import httpx
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from chinese_calendar import get_holiday_detail, is_workday
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 
 class CJKResponse(JSONResponse):
     media_type = "application/json; charset=utf-8"
@@ -197,9 +197,14 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="中国工作日校验 API", version="1.0.0", lifespan=lifespan, default_response_class=CJKResponse)
 
 
-@app.get("/workday/check/tomorrow")
-def check_tomorrow():
-    """获取今天和明天的工作日状态"""
+@app.get("/workday")
+def workday_index():
+    return RedirectResponse(url="/workday/docs")
+
+
+@app.get("/workday/check")
+def check_default():
+    """默认返回今天和明天的工作日状态"""
     today = date.today()
     tomorrow = today + timedelta(days=1)
     today_status = get_date_status(today)
@@ -213,6 +218,31 @@ def check_tomorrow():
     }
 
 
+@app.get("/workday/check/today")
+def check_today():
+    """返回今天的工作日状态"""
+    today = date.today()
+    status = get_date_status(today)
+    status.pop("next_rest_day", None)
+    return {
+        "today": status,
+        "next_rest_day": find_next_rest_day(today),
+    }
+
+
+@app.get("/workday/check/tomorrow")
+def check_tomorrow():
+    """返回明天的工作日状态"""
+    today = date.today()
+    tomorrow = today + timedelta(days=1)
+    status = get_date_status(tomorrow)
+    status.pop("next_rest_day", None)
+    return {
+        "tomorrow": status,
+        "next_rest_day": find_next_rest_day(today),
+    }
+
+
 @app.get("/workday/check/{target_date}")
 def check_date(target_date: str):
     """查询指定日期是否为工作日，格式: YYYY-MM-DD"""
@@ -221,7 +251,12 @@ def check_date(target_date: str):
     except ValueError:
         raise HTTPException(status_code=400, detail="日期格式错误，请使用 YYYY-MM-DD")
     try:
-        return get_date_status(d)
+        status = get_date_status(d)
+        status.pop("next_rest_day", None)
+        return {
+            "date": status,
+            "next_rest_day": find_next_rest_day(date.today()),
+        }
     except NotImplementedError:
         raise HTTPException(
             status_code=400,
