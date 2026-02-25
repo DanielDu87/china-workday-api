@@ -22,24 +22,24 @@ GET /check/tomorrow
 
 ```json
 {
-  "today": {
-    "date": "2026-02-25",
-    "weekday": "周三",
-    "is_workday": true,
-    "detail": "正常工作日"
-  },
-  "tomorrow": {
-    "date": "2026-02-26",
-    "weekday": "周四",
-    "is_workday": true,
-    "detail": "正常工作日"
-  },
-  "next_rest_day": {
-    "date": "2026-02-28",
-    "weekday": "周六",
-    "detail": "周末",
-    "days_from_now": 3
-  }
+ "today": {
+  "date": "2026-02-25",
+  "weekday": "周三",
+  "is_workday": true,
+  "detail": "正常工作日"
+ },
+ "tomorrow": {
+  "date": "2026-02-26",
+  "weekday": "周四",
+  "is_workday": true,
+  "detail": "正常工作日"
+ },
+ "next_rest_day": {
+  "date": "2026-02-28",
+  "weekday": "周六",
+  "detail": "周末",
+  "days_from_now": 3
+ }
 }
 ```
 
