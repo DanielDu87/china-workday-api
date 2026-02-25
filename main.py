@@ -187,10 +187,10 @@ async def lifespan(app: FastAPI):
     scheduler.shutdown()
 
 
-app = FastAPI(title="中国工作日校验 API", version="1.0.0", lifespan=lifespan, root_path="/workday")
+app = FastAPI(title="中国工作日校验 API", version="1.0.0", lifespan=lifespan)
 
 
-@app.get("/check/tomorrow")
+@app.get("/workday/check/tomorrow")
 def check_tomorrow():
     """获取今天和明天的工作日状态"""
     today = date.today()
@@ -206,7 +206,7 @@ def check_tomorrow():
     }
 
 
-@app.get("/check/{target_date}")
+@app.get("/workday/check/{target_date}")
 def check_date(target_date: str):
     """查询指定日期是否为工作日，格式: YYYY-MM-DD"""
     try:
