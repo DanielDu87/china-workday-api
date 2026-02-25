@@ -187,7 +187,7 @@ async def lifespan(app: FastAPI):
     scheduler.shutdown()
 
 
-app = FastAPI(title="中国工作日校验 API", version="1.0.0", lifespan=lifespan)
+app = FastAPI(title="中国工作日校验 API", version="1.0.0", lifespan=lifespan, root_path="/workday")
 
 
 @app.get("/check/tomorrow")
