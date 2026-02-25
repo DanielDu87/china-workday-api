@@ -1,0 +1,14 @@
+services:
+  workday-api:
+    build: .
+    container_name: china-workday-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - cache-data:/app/cache
+    restart: always
+    environment:
+      - TZ=Asia/Shanghai
+
+volumes:
+  cache-data:
